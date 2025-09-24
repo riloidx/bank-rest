@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      file: db/migration/changes/20250924-1022__init-schemas.yml
