@@ -1,0 +1,25 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: freelance-backend
+
+  datasource:
+    url: postgresql://localhost/bank_db
+    username: postgres
+    password: postgres
+
+security:
+  jwt:
+    access:
+      key: 864cd532e9790537abbf50182f9681ff4db9c3a996fe9112d374ddc73b42854f
+      expiration-ms: 900000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
