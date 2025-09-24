@@ -8,9 +8,12 @@ spring:
     name: freelance-backend
 
   datasource:
-    url: postgresql://localhost/bank_db
+    url: jdbc:postgresql://localhost:5432/bank_db
     username: postgres
     password: postgres
+
+  liquibase:
+    change-log: classpath:/db/migration/db.changelog-master.yml
 
 security:
   jwt:

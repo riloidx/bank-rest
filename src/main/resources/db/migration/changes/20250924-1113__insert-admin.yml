@@ -16,7 +16,7 @@ databaseChangeLog:
                   name: password_hash
                   value: $2a$10$9l/2J.xFq9no1pAxjriiHO6CqDz1LPFcHX67NaKJAkidv7YKJva6q
         - insert:
-            tableName: roles
+            tableName: users_roles
             columns:
               - column:
                   name: user_id
@@ -25,7 +25,7 @@ databaseChangeLog:
                   name: role_id
                   value: 1
         - insert:
-            tableName: roles
+            tableName: users_roles
             columns:
               - column:
                   name: user_id

@@ -4,13 +4,13 @@ databaseChangeLog:
       author: matvey
       changes:
         - insert:
-            tableName: users_roles
+            tableName: roles
             columns:
               - column:
                   name: name
                   value: USER
         - insert:
-            tableName: users_roles
+            tableName: roles
             columns:
               - column:
                   name: name

@@ -4,4 +4,4 @@ databaseChangeLog:
   - include:
       file: db/migration/changes/20250924-1103__insert-roles.yml
   - include:
-      file: db/migration/changes/20250924-1113__inset-admin.yml
+      file: db/migration/changes/20250924-1113__insert-admin.yml
