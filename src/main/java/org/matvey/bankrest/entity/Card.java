@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -29,7 +30,7 @@ public class Card {
 
     @ColumnDefault("0")
     @Column(name = "balance", precision = 12, scale = 2)
-    private Double balance;
+    private BigDecimal balance;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
