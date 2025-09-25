@@ -21,7 +21,7 @@ security:
       key: 864cd532e9790537abbf50182f9681ff4db9c3a996fe9112d374ddc73b42854f
       expiration-ms: 900000
 
-springdoc:
+docs:
   swagger-ui:
     path: /swagger-ui.html
   api-docs:

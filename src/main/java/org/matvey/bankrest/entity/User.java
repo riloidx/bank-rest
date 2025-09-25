@@ -32,5 +32,4 @@ public class User {
 
     @ManyToMany(mappedBy = "owner")
     private Set<Role> roles;
-
 }
