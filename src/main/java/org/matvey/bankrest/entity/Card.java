@@ -23,9 +23,10 @@ public class Card {
     @Column(name = "expiration_date", nullable = false)
     private LocalDate expirationDate;
 
+    @Enumerated(EnumType.STRING)
     @ColumnDefault("'ACTIVE'")
     @Column(name = "card_status", length = 32)
-    private String cardStatus;
+    private CardStatus cardStatus;
 
     @ColumnDefault("0")
     @Column(name = "balance", precision = 12, scale = 2)
@@ -34,5 +35,4 @@ public class Card {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
-
 }
