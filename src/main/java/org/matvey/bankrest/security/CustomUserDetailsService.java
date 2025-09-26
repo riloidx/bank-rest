@@ -1,7 +1,7 @@
 package org.matvey.bankrest.security;
 
 import lombok.RequiredArgsConstructor;
-import org.matvey.bankrest.repository.UserRepository;
+import org.matvey.bankrest.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserService userService;
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+        return null;
     }
 }
