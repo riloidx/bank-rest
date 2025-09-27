@@ -28,7 +28,7 @@ public class User {
     @OneToMany(mappedBy = "owner")
     private List<Card> cards = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
