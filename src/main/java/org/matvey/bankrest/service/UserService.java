@@ -3,6 +3,7 @@ package org.matvey.bankrest.service;
 import lombok.RequiredArgsConstructor;
 import org.matvey.bankrest.dto.request.RegistrationDto;
 import org.matvey.bankrest.dto.response.UserResponseDto;
+import org.matvey.bankrest.entity.Role;
 import org.matvey.bankrest.entity.User;
 import org.matvey.bankrest.exception.UserAlreadyExistsException;
 import org.matvey.bankrest.exception.UserNotFoundException;
@@ -19,6 +20,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     public UserResponseDto findUserById(long id) {
         User user = findByIdOrThrow(id);
@@ -35,12 +37,12 @@ public class UserService {
         return userMapper.toDto(users);
     }
 
-    public UserResponseDto create(RegistrationDto registrationDto) {
+    public User create(RegistrationDto registrationDto) {
         validateEmailNotExists(registrationDto.getEmail());
         User user = prepareNewUser(registrationDto);
         userRepository.save(user);
 
-        return userMapper.toDto(user);
+        return user;
     }
 
     public UserResponseDto update(long id, RegistrationDto registrationDto) {
@@ -61,7 +63,10 @@ public class UserService {
 
     private User prepareNewUser(RegistrationDto registrationDto) {
         User user = userMapper.toEntity(registrationDto);
+
+        user.getRoles().add(roleService.findRoleByName("USER"));
         user.setPasswordHash(passwordEncoder.encode(registrationDto.getPassword()));
+
         return user;
     }
 
@@ -70,7 +75,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    private User findByEmailOrThrow(String email) {
+    public User findByEmailOrThrow(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }

@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -28,7 +26,7 @@ public class User {
     private String passwordHash;
 
     @OneToMany(mappedBy = "owner")
-    private List<Card> cards;
+    private List<Card> cards = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -36,5 +34,5 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 }
