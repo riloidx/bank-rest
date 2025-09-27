@@ -8,7 +8,6 @@ import java.time.LocalDate;
 
 @Data
 public class CardResponseDto {
-    private String id;
     private String cardNumber;
     private LocalDate expirationDate;
     private CardStatus cardStatus;
