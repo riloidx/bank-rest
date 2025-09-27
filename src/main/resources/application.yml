@@ -5,7 +5,7 @@ server:
 
 spring:
   application:
-    name: freelance-backend
+    name: bank-rest
 
   datasource:
     url: jdbc:postgresql://localhost:5432/bank_db
