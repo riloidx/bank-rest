@@ -1,7 +1,6 @@
 package org.matvey.bankrest.security;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import org.matvey.bankrest.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,15 +8,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-@Data
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.matvey.bankrest.entity.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+
+@Getter
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
+
     private User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user
-                .getRoles()
+        return user.getRoles()
                 .stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .toList();
@@ -53,3 +61,6 @@ public class CustomUserDetails implements UserDetails {
         return true;
     }
 }
+
+
+
