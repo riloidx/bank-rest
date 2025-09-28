@@ -15,16 +15,10 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private final SecretKey key;
-    private final long expirationMs;
-
-    public JwtUtil(
-            @Value("${security.jwt.access.key}") String jwtSecret,
-            @Value("${security.jwt.access.expiration-ms}") long jwtExpirationMs
-    ) {
-        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-        this.expirationMs = jwtExpirationMs;
-    }
+    @Value("${security.jwt.access.key}")
+    private SecretKey key;
+    @Value("${security.jwt.access.expiration-ms}")
+    private long expirationMs;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

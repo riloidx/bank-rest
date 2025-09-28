@@ -8,7 +8,8 @@ import java.time.LocalDate;
 
 @Data
 public class CardResponseDto {
-    private String cardNumber;
+    private Long id;
+    private String maskedCardNumber;
     private LocalDate expirationDate;
     private CardStatus cardStatus;
     private BigDecimal balance;

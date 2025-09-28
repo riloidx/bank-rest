@@ -20,6 +20,11 @@ security:
     access:
       key: 864cd532e9790537abbf50182f9681ff4db9c3a996fe9112d374ddc73b42854f
       expiration-ms: 900000
+  encryption:
+    secret-key: bW9WdE9jbnJWdFhzQ1ZqQm0wWUV4dGpFUmhHV1h2a1U=
+    algorithm: AES
+    transformation: AES/ECB/PKCS5Padding
+
 
 docs:
   swagger-ui:
