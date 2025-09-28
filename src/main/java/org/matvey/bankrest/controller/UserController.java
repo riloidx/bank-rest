@@ -18,7 +18,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponseDto> me(@AuthenticationPrincipal CustomUserDetails currentUser) {
-        UserResponseDto dto = userService.findUserByEmail(currentUser.getUsername());
+        UserResponseDto dto = userService.findUserDtoByEmail(currentUser.getUsername());
 
         return ResponseEntity.ok(dto);
     }

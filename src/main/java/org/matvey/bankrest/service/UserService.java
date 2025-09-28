@@ -3,7 +3,6 @@ package org.matvey.bankrest.service;
 import lombok.RequiredArgsConstructor;
 import org.matvey.bankrest.dto.request.RegistrationDto;
 import org.matvey.bankrest.dto.response.UserResponseDto;
-import org.matvey.bankrest.entity.Role;
 import org.matvey.bankrest.entity.User;
 import org.matvey.bankrest.exception.UserAlreadyExistsException;
 import org.matvey.bankrest.exception.UserNotFoundException;
@@ -22,13 +21,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
-    public UserResponseDto findUserById(long id) {
-        User user = findByIdOrThrow(id);
+
+    public UserResponseDto findUserDtoById(long id) {
+        User user = findUserById(id);
         return userMapper.toDto(user);
     }
 
-    public UserResponseDto findUserByEmail(String email) {
-        User user = findByEmailOrThrow(email);
+    public UserResponseDto findUserDtoByEmail(String email) {
+        User user = findUserByEmail(email);
         return userMapper.toDto(user);
     }
 
@@ -46,8 +46,7 @@ public class UserService {
     }
 
     public UserResponseDto update(long id, RegistrationDto registrationDto) {
-        User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+        User existingUser = findUserById(id);
 
         userMapper.updateEntityFromDto(registrationDto, existingUser);
 
@@ -57,7 +56,7 @@ public class UserService {
     }
 
     public void delete(long id) {
-        findByIdOrThrow(id);
+        findUserById(id);
         userRepository.deleteById(id);
     }
 
@@ -70,12 +69,12 @@ public class UserService {
         return user;
     }
 
-    private User findByIdOrThrow(long id) {
+    public User findUserById(long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public User findByEmailOrThrow(String email) {
+    public User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }
