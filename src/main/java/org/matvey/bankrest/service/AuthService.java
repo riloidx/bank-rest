@@ -28,7 +28,7 @@ public class AuthService {
     }
 
     public AuthResponseDto login(LoginDto loginDto) {
-        User user = userService.findByEmailOrThrow(loginDto.getEmail());
+        User user = userService.findUserByEmail(loginDto.getEmail());
         matchPasswordOrThrow(user.getPasswordHash(), loginDto.getPassword());
 
         String token = jwtUtil.generateToken(new CustomUserDetails(user));
