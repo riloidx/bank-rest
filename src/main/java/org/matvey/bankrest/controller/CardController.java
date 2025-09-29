@@ -2,6 +2,12 @@ package org.matvey.bankrest.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +15,8 @@ import org.matvey.bankrest.dto.request.CardRequestDto;
 import org.matvey.bankrest.dto.request.CardUpdateDto;
 import org.matvey.bankrest.dto.request.TransferRequestDto;
 import org.matvey.bankrest.dto.response.CardResponseDto;
+import org.matvey.bankrest.dto.response.ErrorResponse;
+import org.matvey.bankrest.dto.response.ValidationErrorResponse;
 import org.matvey.bankrest.entity.CardStatus;
 import org.matvey.bankrest.service.CardService;
 import org.springframework.data.domain.Page;
@@ -25,26 +33,47 @@ import java.util.List;
 @RestController
 @RequestMapping("/cards")
 @RequiredArgsConstructor
-@Tag(name = "Card Management", description = "API для управления картами")
+@Tag(name = "Управление картами", description = "API для управления банковскими картами")
+@SecurityRequirement(name = "bearerAuth")
 public class CardController {
     private final CardService cardService;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Получить все карты", description = "Доступно только администраторам")
+    @Operation(summary = "Получить все карты", 
+               description = "Возвращает список всех карт в системе. Доступно только администраторам.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Список карт успешно получен",
+                    content = @Content(mediaType = "application/json", 
+                                     array = @ArraySchema(schema = @Schema(implementation = CardResponseDto.class)))),
+        @ApiResponse(responseCode = "401", description = "Не авторизован",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "403", description = "Недостаточно прав доступа",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<List<CardResponseDto>> getAllCards() {
         List<CardResponseDto> cards = cardService.findAllCards();
         return ResponseEntity.ok(cards);
     }
 
     @GetMapping("/my")
-    @Operation(summary = "Получить мои карты", description = "Получить карты текущего пользователя с пагинацией")
+    @Operation(summary = "Получить мои карты", 
+               description = "Возвращает карты текущего пользователя с поддержкой пагинации")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Карты пользователя успешно получены",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = Page.class))),
+        @ApiResponse(responseCode = "401", description = "Не авторизован",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<Page<CardResponseDto>> getMyCards(
             Authentication authentication,
-            @PageableDefault(size = 10) Pageable pageable) {
+            @Parameter(description = "Параметры пагинации") @PageableDefault(size = 10) Pageable pageable) {
         Long userId = getCurrentUserId(authentication);
         Page<CardResponseDto> cards = cardService.findUserCards(userId, pageable);
-
         return ResponseEntity.ok(cards);
     }
 
@@ -72,13 +101,24 @@ public class CardController {
     }
 
     @PostMapping
-    @Operation(summary = "Создать новую карту", description = "Создать новую карту для текущего пользователя")
+    @Operation(summary = "Создать новую карту", 
+               description = "Создает новую банковскую карту для текущего пользователя")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Карта успешно создана",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = CardResponseDto.class))),
+        @ApiResponse(responseCode = "400", description = "Ошибка валидации данных",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = ValidationErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Не авторизован",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<CardResponseDto> createCard(
             @Valid @RequestBody CardRequestDto cardRequestDto,
             Authentication authentication) {
         Long userId = getCurrentUserId(authentication);
         CardResponseDto card = cardService.create(cardRequestDto, userId);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(card);
     }
 
@@ -125,13 +165,25 @@ public class CardController {
     }
 
     @PostMapping("/transfer")
-    @Operation(summary = "Перевод между картами", description = "Перевод средств между картами текущего пользователя")
+    @Operation(summary = "Перевод между картами", 
+               description = "Осуществляет перевод средств между картами текущего пользователя")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Перевод успешно выполнен"),
+        @ApiResponse(responseCode = "400", description = "Ошибка валидации или недостаточно средств",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Не авторизован",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Карта не найдена",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<Void> transferBetweenCards(
             @Valid @RequestBody TransferRequestDto transferRequest,
             Authentication authentication) {
         Long userId = getCurrentUserId(authentication);
         cardService.transferBetweenCards(transferRequest, userId);
-
         return ResponseEntity.ok().build();
     }
 

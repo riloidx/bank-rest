@@ -1,0 +1,37 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: bank-rest
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/bank_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+
+  liquibase:
+    change-log: classpath:/db/migration/db.changelog-master.yml
+
+security:
+  jwt:
+    access:
+      key: ${JWT_SECRET_KEY:864cd532e9790537abbf50182f9681ff4db9c3a996fe9112d374ddc73b42854f}
+      expiration-ms: 900000
+  encryption:
+    secret-key: ${ENCRYPTION_SECRET_KEY:bW9WdE9jbnJWdFhzQ1ZqQm0wWUV4dGpFUmhHV1h2a1U=}
+    algorithm: AES
+    transformation: AES/ECB/PKCS5Padding
+
+docs:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+
+logging:
+  level:
+    org.matvey.bankrest: INFO
+    org.springframework.security: DEBUG

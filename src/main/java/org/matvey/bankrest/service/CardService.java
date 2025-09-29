@@ -24,140 +24,136 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CardService {
-    private final CardRepository cardRepo;
+
+    private final CardRepository cardRepository;
     private final CardMapper cardMapper;
     private final UserService userService;
     private final CardUtils cardUtils;
 
+    @Transactional(readOnly = true)
     public List<CardResponseDto> findAllCards() {
-        List<Card> cards = cardRepo.findAll();
-        return cardMapper.toDto(cards);
+        return cardMapper.toDto(cardRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public Page<CardResponseDto> findUserCards(Long userId, Pageable pageable) {
-        Page<Card> cards = cardRepo.findByOwnerId(userId, pageable);
-        return cards.map(cardMapper::toDto);
+        return cardRepository.findByOwnerId(userId, pageable).map(cardMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
     public Page<CardResponseDto> findUserCardsByStatus(Long userId, CardStatus status, Pageable pageable) {
-        Page<Card> cards = cardRepo.findByOwnerIdAndCardStatus(userId, status, pageable);
-        return cards.map(cardMapper::toDto);
+        return cardRepository.findByOwnerIdAndCardStatus(userId, status, pageable).map(cardMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
     public CardResponseDto findCardDtoById(long id) {
-        return cardMapper.toDto(findCardById(id));
+        return cardMapper.toDto(getCardById(id));
     }
 
+    @Transactional(readOnly = true)
     public CardResponseDto findUserCardById(Long userId, Long cardId) {
-        Card card = cardRepo.findByIdAndOwnerId(cardId, userId)
+        Card card = cardRepository.findByIdAndOwnerId(cardId, userId)
                 .orElseThrow(() -> new CardNotFoundException(cardId));
         return cardMapper.toDto(card);
     }
 
     @Transactional
-    public CardResponseDto create(CardRequestDto cardRequestDto, long userId) {
-        Card card = prepareNewCard(cardRequestDto, userId);
-        Card savedCard = cardRepo.save(card);
-        return cardMapper.toDto(savedCard);
+    public CardResponseDto create(CardRequestDto dto, long userId) {
+        Card card = buildNewCard(dto, userId);
+        return cardMapper.toDto(cardRepository.save(card));
     }
 
     @Transactional
-    public CardResponseDto update(CardUpdateDto cardUpdateDto, long id) {
-        Card existingCard = findCardById(id);
-        cardMapper.updateEntityFromDto(cardUpdateDto, existingCard);
-        Card updatedCard = cardRepo.save(existingCard);
-        return cardMapper.toDto(updatedCard);
+    public CardResponseDto update(CardUpdateDto dto, long id) {
+        Card existing = getCardById(id);
+        cardMapper.updateEntityFromDto(dto, existing);
+        return cardMapper.toDto(cardRepository.save(existing));
     }
 
     @Transactional
     public CardResponseDto blockCard(Long cardId, Long userId) {
-        Card card = cardRepo.findByIdAndOwnerId(cardId, userId)
-                .orElseThrow(() -> new CardNotFoundException(cardId));
-        
-        if (card.getCardStatus() == CardStatus.BLOCKED) {
-            throw new InvalidCardOperationException("Карта уже заблокирована");
-        }
-        
+        Card card = getCardByOwner(cardId, userId);
+        ensureNotBlocked(card);
         card.setCardStatus(CardStatus.BLOCKED);
-        Card savedCard = cardRepo.save(card);
-        return cardMapper.toDto(savedCard);
+        return cardMapper.toDto(cardRepository.save(card));
     }
 
     @Transactional
     public CardResponseDto activateCard(Long cardId) {
-        Card card = findCardById(cardId);
-        
-        if (card.getCardStatus() == CardStatus.ACTIVE) {
-            throw new InvalidCardOperationException("Карта уже активна");
-        }
-        
-        if (card.getExpirationDate().isBefore(LocalDate.now())) {
-            throw new InvalidCardOperationException("Нельзя активировать карту с истекшим сроком действия");
-        }
-        
+        Card card = getCardById(cardId);
+        ensureActivatable(card);
         card.setCardStatus(CardStatus.ACTIVE);
-        Card savedCard = cardRepo.save(card);
-        return cardMapper.toDto(savedCard);
+        return cardMapper.toDto(cardRepository.save(card));
     }
 
     @Transactional
     public void deleteCard(Long cardId) {
-        Card card = findCardById(cardId);
-        cardRepo.delete(card);
+        cardRepository.delete(getCardById(cardId));
     }
 
     @Transactional
-    public void transferBetweenCards(TransferRequestDto transferRequest, Long userId) {
-        Card fromCard = cardRepo.findByIdAndOwnerId(transferRequest.getFromCardId(), userId)
-                .orElseThrow(() -> new CardNotFoundException(transferRequest.getFromCardId()));
-        
-        Card toCard = cardRepo.findByIdAndOwnerId(transferRequest.getToCardId(), userId)
-                .orElseThrow(() -> new CardNotFoundException(transferRequest.getToCardId()));
-        
-        // Проверяем статус карт
-        if (fromCard.getCardStatus() != CardStatus.ACTIVE) {
-            throw new InvalidCardOperationException("Карта отправителя неактивна");
-        }
-        
-        if (toCard.getCardStatus() != CardStatus.ACTIVE) {
-            throw new InvalidCardOperationException("Карта получателя неактивна");
-        }
-        
-        // Проверяем срок действия карт
-        if (fromCard.getExpirationDate().isBefore(LocalDate.now())) {
-            throw new InvalidCardOperationException("Срок действия карты отправителя истек");
-        }
-        
-        if (toCard.getExpirationDate().isBefore(LocalDate.now())) {
-            throw new InvalidCardOperationException("Срок действия карты получателя истек");
-        }
-        
-        // Проверяем достаточность средств
-        if (fromCard.getBalance().compareTo(transferRequest.getAmount()) < 0) {
-            throw new InsufficientFundsException("Недостаточно средств на карте отправителя");
-        }
-        
-        // Выполняем перевод
-        fromCard.setBalance(fromCard.getBalance().subtract(transferRequest.getAmount()));
-        toCard.setBalance(toCard.getBalance().add(transferRequest.getAmount()));
-        
-        cardRepo.save(fromCard);
-        cardRepo.save(toCard);
+    public void transferBetweenCards(TransferRequestDto transfer, Long userId) {
+        Card fromCard = getCardByOwner(transfer.getFromCardId(), userId);
+        Card toCard = getCardByOwner(transfer.getToCardId(), userId);
+        validateTransfer(fromCard, toCard, transfer.getAmount());
+        fromCard.setBalance(fromCard.getBalance().subtract(transfer.getAmount()));
+        toCard.setBalance(toCard.getBalance().add(transfer.getAmount()));
+        cardRepository.save(fromCard);
+        cardRepository.save(toCard);
     }
 
-    private Card findCardById(long id) {
-        return cardRepo.findById(id)
+    private Card getCardById(long id) {
+        return cardRepository.findById(id)
                 .orElseThrow(() -> new CardNotFoundException(id));
     }
 
-    private Card prepareNewCard(CardRequestDto cardRequestDto, long userId) {
-        Card card = cardMapper.toEntity(cardRequestDto);
+    private Card getCardByOwner(Long cardId, Long userId) {
+        return cardRepository.findByIdAndOwnerId(cardId, userId)
+                .orElseThrow(() -> new CardNotFoundException(cardId));
+    }
+
+    private Card buildNewCard(CardRequestDto dto, long userId) {
+        Card card = cardMapper.toEntity(dto);
         card.setOwner(userService.findUserById(userId));
-        
-        // Генерируем и шифруем номер карты
         String cardNumber = cardUtils.generateCardNumber();
         card.setCardNumber(cardUtils.encryptCardNumber(cardNumber));
-        
         return card;
+    }
+
+    private void ensureNotBlocked(Card card) {
+        if (card.getCardStatus() == CardStatus.BLOCKED) {
+            throw new InvalidCardOperationException("Карта уже заблокирована");
+        }
+    }
+
+    private void ensureActivatable(Card card) {
+        if (card.getCardStatus() == CardStatus.ACTIVE) {
+            throw new InvalidCardOperationException("Карта уже активна");
+        }
+        if (isExpired(card)) {
+            throw new InvalidCardOperationException("Нельзя активировать карту с истекшим сроком действия");
+        }
+    }
+
+    private boolean isExpired(Card card) {
+        return card.getExpirationDate().isBefore(LocalDate.now());
+    }
+
+    private void validateTransfer(Card from, Card to, java.math.BigDecimal amount) {
+        if (from.getCardStatus() != CardStatus.ACTIVE) {
+            throw new InvalidCardOperationException("Карта отправителя неактивна");
+        }
+        if (to.getCardStatus() != CardStatus.ACTIVE) {
+            throw new InvalidCardOperationException("Карта получателя неактивна");
+        }
+        if (isExpired(from)) {
+            throw new InvalidCardOperationException("Срок действия карты отправителя истек");
+        }
+        if (isExpired(to)) {
+            throw new InvalidCardOperationException("Срок действия карты получателя истек");
+        }
+        if (from.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException("Недостаточно средств на карте отправителя");
+        }
     }
 }

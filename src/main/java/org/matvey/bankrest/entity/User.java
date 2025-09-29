@@ -23,7 +23,7 @@ public class User {
     private String email;
 
     @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    private String password;
 
     @OneToMany(mappedBy = "owner")
     private List<Card> cards = new ArrayList<>();
