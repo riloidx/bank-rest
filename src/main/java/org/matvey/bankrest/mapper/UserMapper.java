@@ -9,7 +9,7 @@ import org.matvey.bankrest.entity.User;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {CardMapper.class, RoleMapper.class})
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = { RoleMapper.class})
 public interface UserMapper {
     User toEntity(RegistrationDto registrationDto);
 
