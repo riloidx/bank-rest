@@ -8,7 +8,6 @@ public class DifferentCardsValidator implements ConstraintValidator<DifferentCar
 
     @Override
     public void initialize(DifferentCards constraintAnnotation) {
-        // Инициализация не требуется
     }
 
     @Override
@@ -18,7 +17,7 @@ public class DifferentCardsValidator implements ConstraintValidator<DifferentCar
         }
 
         if (transferRequest.getFromCardId() == null || transferRequest.getToCardId() == null) {
-            return true; // Пусть другие валидаторы обработают null значения
+            return true;
         }
 
         return !transferRequest.getFromCardId().equals(transferRequest.getToCardId());

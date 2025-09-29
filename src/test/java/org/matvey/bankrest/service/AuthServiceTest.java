@@ -89,7 +89,6 @@ class AuthServiceTest {
 
     @Test
     void register_WhenUserDoesNotExist_ShouldCreateUser() {
-        // Given
         when(userRepository.existsByEmail(registrationDto.getEmail())).thenReturn(false);
         when(userMapper.toEntity(registrationDto)).thenReturn(testUser);
         when(passwordEncoder.encode(registrationDto.getPassword())).thenReturn("encodedPassword");
@@ -98,10 +97,7 @@ class AuthServiceTest {
         when(userMapper.toDto(testUser)).thenReturn(userResponseDto);
         when(jwtUtil.generateToken(testUser.getEmail())).thenReturn("jwt-token");
 
-        // When
         AuthResponseDto result = authService.register(registrationDto);
-
-        // Then
         assertNotNull(result);
         assertEquals(userResponseDto, result.getUser());
         assertEquals("jwt-token", result.getAccessToken());
@@ -110,17 +106,13 @@ class AuthServiceTest {
 
     @Test
     void register_WhenUserAlreadyExists_ShouldThrowException() {
-        // Given
         when(userRepository.existsByEmail(registrationDto.getEmail())).thenReturn(true);
-
-        // When & Then
         assertThrows(UserAlreadyExistsException.class, () -> authService.register(registrationDto));
         verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void login_WhenCredentialsValid_ShouldReturnAuthResponse() {
-        // Given
         Authentication authentication = mock(Authentication.class);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
@@ -128,10 +120,7 @@ class AuthServiceTest {
         when(userMapper.toDto(testUser)).thenReturn(userResponseDto);
         when(jwtUtil.generateToken(testUser.getEmail())).thenReturn("jwt-token");
 
-        // When
         AuthResponseDto result = authService.login(loginDto);
-
-        // Then
         assertNotNull(result);
         assertEquals(userResponseDto, result.getUser());
         assertEquals("jwt-token", result.getAccessToken());
@@ -139,11 +128,8 @@ class AuthServiceTest {
 
     @Test
     void login_WhenCredentialsInvalid_ShouldThrowException() {
-        // Given
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Invalid credentials"));
-
-        // When & Then
         assertThrows(BadCredentialsException.class, () -> authService.login(loginDto));
     }
 }

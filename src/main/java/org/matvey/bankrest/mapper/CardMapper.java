@@ -16,8 +16,8 @@ import java.util.List;
 public interface CardMapper {
     
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "cardNumber", ignore = true) // Будет генерироваться в сервисе
-    @Mapping(target = "owner", ignore = true) // Будет устанавливаться в сервисе
+    @Mapping(target = "cardNumber", ignore = true)
+    @Mapping(target = "owner", ignore = true)
     Card toEntity(CardRequestDto cardRequestDto);
 
     @Mapping(target = "maskedCardNumber", source = "cardNumber", qualifiedByName = "maskCardNumber")
@@ -36,7 +36,7 @@ public interface CardMapper {
         if (cardNumber == null) {
             return null;
         }
-        // Создаем экземпляр CardUtils для маскирования
+
         CardUtils cardUtils = new CardUtils();
         return cardUtils.maskCardNumber(cardUtils.decryptCardNumber(cardNumber));
     }

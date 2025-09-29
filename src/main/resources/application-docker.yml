@@ -30,8 +30,3 @@ docs:
     path: /swagger-ui.html
   api-docs:
     path: /api-docs
-
-logging:
-  level:
-    org.matvey.bankrest: INFO
-    org.springframework.security: DEBUG

@@ -32,9 +32,3 @@ security:
     secret-key: dGVzdFNlY3JldEtleXRlc3RTZWNyZXRLZXl0ZXN0U2VjcmV0S2V5
     algorithm: AES
     transformation: AES/ECB/PKCS5Padding
-
-logging:
-  level:
-    org.matvey.bankrest: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG

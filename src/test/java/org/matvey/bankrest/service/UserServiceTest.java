@@ -56,13 +56,10 @@ class UserServiceTest {
 
     @Test
     void findUserById_WhenUserExists_ShouldReturnUser() {
-        // Given
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
-        // When
         User result = userService.findUserById(1L);
 
-        // Then
         assertNotNull(result);
         assertEquals(testUser.getId(), result.getId());
         assertEquals(testUser.getEmail(), result.getEmail());
@@ -70,23 +67,18 @@ class UserServiceTest {
 
     @Test
     void findUserById_WhenUserNotExists_ShouldThrowException() {
-        // Given
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // When & Then
         assertThrows(UserNotFoundException.class, () -> userService.findUserById(1L));
     }
 
     @Test
     void findUserDtoByEmail_WhenUserExists_ShouldReturnUserDto() {
-        // Given
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
         when(userMapper.toDto(testUser)).thenReturn(userResponseDto);
 
-        // When
         UserResponseDto result = userService.findUserDtoByEmail("test@example.com");
 
-        // Then
         assertNotNull(result);
         assertEquals(userResponseDto.getId(), result.getId());
         assertEquals(userResponseDto.getEmail(), result.getEmail());
@@ -94,17 +86,14 @@ class UserServiceTest {
 
     @Test
     void findUserDtoByEmail_WhenUserNotExists_ShouldThrowException() {
-        // Given
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
 
-        // When & Then
         assertThrows(UserNotFoundException.class, () -> 
             userService.findUserDtoByEmail("test@example.com"));
     }
 
     @Test
     void findAllUsers_ShouldReturnAllUsers() {
-        // Given
         User user2 = new User();
         user2.setId(2L);
         user2.setName("User 2");
@@ -122,10 +111,7 @@ class UserServiceTest {
         when(userMapper.toDto(testUser)).thenReturn(userResponseDto);
         when(userMapper.toDto(user2)).thenReturn(userDto2);
 
-        // When
         List<UserResponseDto> result = userService.findAllUsers();
-
-        // Then
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(userResponseDto.getId(), result.get(0).getId());
@@ -134,25 +120,19 @@ class UserServiceTest {
 
     @Test
     void existsByEmail_WhenUserExists_ShouldReturnTrue() {
-        // Given
         when(userRepository.existsByEmail("test@example.com")).thenReturn(true);
 
-        // When
         boolean result = userService.existsByEmail("test@example.com");
 
-        // Then
         assertTrue(result);
     }
 
     @Test
     void existsByEmail_WhenUserNotExists_ShouldReturnFalse() {
-        // Given
         when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
 
-        // When
         boolean result = userService.existsByEmail("test@example.com");
 
-        // Then
         assertFalse(result);
     }
 }

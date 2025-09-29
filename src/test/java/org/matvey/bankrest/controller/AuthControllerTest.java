@@ -58,10 +58,7 @@ class AuthControllerTest {
 
     @Test
     void registration_WhenValidData_ShouldReturnAuthResponse() throws Exception {
-        // Given
         when(authService.register(any(RegistrationDto.class))).thenReturn(authResponseDto);
-
-        // When & Then
         mockMvc.perform(post("/registration")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registrationDto)))
@@ -73,11 +70,8 @@ class AuthControllerTest {
 
     @Test
     void registration_WhenInvalidData_ShouldReturnBadRequest() throws Exception {
-        // Given
         registrationDto.setEmail("invalid-email");
-        registrationDto.setPassword("123"); // Too short
-
-        // When & Then
+        registrationDto.setPassword("123");
         mockMvc.perform(post("/registration")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registrationDto)))
@@ -86,11 +80,8 @@ class AuthControllerTest {
 
     @Test
     void registration_WhenUserAlreadyExists_ShouldReturnConflict() throws Exception {
-        // Given
         when(authService.register(any(RegistrationDto.class)))
                 .thenThrow(new UserAlreadyExistsException("User already exists"));
-
-        // When & Then
         mockMvc.perform(post("/registration")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registrationDto)))
@@ -99,10 +90,7 @@ class AuthControllerTest {
 
     @Test
     void login_WhenValidCredentials_ShouldReturnAuthResponse() throws Exception {
-        // Given
         when(authService.login(any(LoginDto.class))).thenReturn(authResponseDto);
-
-        // When & Then
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginDto)))
@@ -114,11 +102,8 @@ class AuthControllerTest {
 
     @Test
     void login_WhenInvalidCredentials_ShouldReturnUnauthorized() throws Exception {
-        // Given
         when(authService.login(any(LoginDto.class)))
                 .thenThrow(new BadCredentialsException("Invalid credentials"));
-
-        // When & Then
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginDto)))
@@ -127,11 +112,8 @@ class AuthControllerTest {
 
     @Test
     void login_WhenInvalidData_ShouldReturnBadRequest() throws Exception {
-        // Given
         loginDto.setEmail("invalid-email");
-        loginDto.setPassword(""); // Empty password
-
-        // When & Then
+        loginDto.setPassword("");
         mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginDto)))
