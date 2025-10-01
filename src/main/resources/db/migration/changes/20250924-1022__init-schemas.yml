@@ -3,6 +3,11 @@ databaseChangeLog:
       id: 20250924-1022-init-schemas
       author: matvey
       changes:
+        - preConditions:
+            onFail: MARK_RAN
+            not:
+              tableExists:
+                tableName: users
         - createTable:
             tableName: users
             columns:
@@ -29,6 +34,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
+        - preConditions:
+            onFail: MARK_RAN
+            not:
+              tableExists:
+                tableName: roles
         - createTable:
             tableName: roles
             columns:
@@ -45,6 +55,11 @@ databaseChangeLog:
                     nullable: false
                     unique: true
 
+        - preConditions:
+            onFail: MARK_RAN
+            not:
+              tableExists:
+                tableName: users_roles
         - createTable:
             tableName: users_roles
             columns:
@@ -71,6 +86,11 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_users_roles_role
 
+        - preConditions:
+            onFail: MARK_RAN
+            not:
+              tableExists:
+                tableName: cards
         - createTable:
             tableName: cards
             columns:

@@ -1,7 +1,13 @@
 databaseChangeLog:
   - changeSet:
-      id: 20250924-1103-insert-admin
+      id: 20250924-1105-insert-admin-user
       author: matvey
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          rowExists:
+            tableName: users
+            where: "email = 'matveybabashka@gmail.com'"
       changes:
         - insert:
             tableName: users
@@ -15,6 +21,17 @@ databaseChangeLog:
               - column:
                   name: password_hash
                   value: $2a$10$9l/2J.xFq9no1pAxjriiHO6CqDz1LPFcHX67NaKJAkidv7YKJva6q
+
+  - changeSet:
+      id: 20250924-1106-insert-admin-role-user
+      author: matvey
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          rowExists:
+            tableName: users_roles
+            where: "user_id = 1 AND role_id = 1"
+      changes:
         - insert:
             tableName: users_roles
             columns:
@@ -24,6 +41,17 @@ databaseChangeLog:
               - column:
                   name: role_id
                   value: 1
+
+  - changeSet:
+      id: 20250924-1107-insert-admin-role-admin
+      author: matvey
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          rowExists:
+            tableName: users_roles
+            where: "user_id = 1 AND role_id = 2"
+      changes:
         - insert:
             tableName: users_roles
             columns:

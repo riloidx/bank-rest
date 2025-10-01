@@ -1,7 +1,13 @@
 databaseChangeLog:
   - changeSet:
-      id: 20250924-1103-insert-roles
+      id: 20250924-1103-insert-role-user
       author: matvey
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          rowExists:
+            tableName: roles
+            where: "name = 'USER'"
       changes:
         - insert:
             tableName: roles
@@ -9,6 +15,17 @@ databaseChangeLog:
               - column:
                   name: name
                   value: USER
+
+  - changeSet:
+      id: 20250924-1104-insert-role-admin
+      author: matvey
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          rowExists:
+            tableName: roles
+            where: "name = 'ADMIN'"
+      changes:
         - insert:
             tableName: roles
             columns:
