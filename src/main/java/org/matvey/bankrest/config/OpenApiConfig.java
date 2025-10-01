@@ -10,9 +10,18 @@ import io.swagger.v3.oas.models.Components;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Конфигурация OpenAPI (Swagger) для документации REST API.
+ * Настраивает информацию о API, схемы безопасности и метаданные.
+ */
 @Configuration
 public class OpenApiConfig {
 
+    /**
+     * Создает кастомную конфигурацию OpenAPI с информацией о проекте и настройками безопасности.
+     *
+     * @return настроенный объект OpenAPI
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()

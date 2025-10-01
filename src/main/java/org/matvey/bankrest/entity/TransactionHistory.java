@@ -8,6 +8,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Сущность истории транзакций.
+ * Хранит информацию о всех операциях с картами в системе.
+ */
 @Getter
 @Setter
 @Entity

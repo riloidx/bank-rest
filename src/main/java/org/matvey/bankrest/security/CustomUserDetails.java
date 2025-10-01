@@ -17,6 +17,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+/**
+ * Кастомная реализация UserDetails для Spring Security.
+ * Адаптирует сущность User для использования в системе аутентификации.
+ */
 @Getter
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
@@ -61,6 +65,11 @@ public class CustomUserDetails implements UserDetails {
         return true;
     }
     
+    /**
+     * Получает ID пользователя.
+     *
+     * @return ID пользователя
+     */
     public Long getId() {
         return user.getId();
     }

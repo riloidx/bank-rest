@@ -5,6 +5,10 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
+/**
+ * Аннотация для валидации того, что карты отправителя и получателя различны.
+ * Применяется на уровне класса для проверки полей fromCardId и toCardId.
+ */
 @Documented
 @Constraint(validatedBy = DifferentCardsValidator.class)
 @Target({ElementType.TYPE})

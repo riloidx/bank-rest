@@ -8,6 +8,10 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
+/**
+ * DTO для стандартного ответа об ошибке.
+ * Содержит информацию об HTTP статусе, типе ошибки и сообщении.
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor

@@ -9,6 +9,10 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.Map;
 
+/**
+ * DTO для ответа при ошибках валидации данных.
+ * Расширяет ErrorResponse, добавляя детальную информацию об ошибках валидации полей.
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor

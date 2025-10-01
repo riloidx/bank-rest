@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Mapper для преобразования между сущностями Role и DTO.
+ * Использует MapStruct для автоматической генерации кода маппинга.
+ */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RoleMapper {
     RoleResponseDto toDto(Role role);
@@ -18,6 +22,12 @@ public interface RoleMapper {
 
     Role toEntity(RoleResponseDto roleDto);
 
+    /**
+     * Преобразует набор ролей в набор строковых названий ролей.
+     *
+     * @param roles набор сущностей ролей
+     * @return набор названий ролей
+     */
     default Set<String> mapRolesToStrings(Set<Role> roles) {
         if (roles == null) {
             return new HashSet<>();

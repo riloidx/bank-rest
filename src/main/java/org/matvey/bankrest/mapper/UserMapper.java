@@ -9,10 +9,26 @@ import org.matvey.bankrest.entity.User;
 
 import java.util.List;
 
+/**
+ * Mapper для преобразования между сущностями User и DTO.
+ * Использует MapStruct для автоматической генерации кода маппинга.
+ */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = { RoleMapper.class})
 public interface UserMapper {
+    /**
+     * Преобразует DTO регистрации в сущность User.
+     *
+     * @param registrationDto DTO с данными регистрации
+     * @return сущность User
+     */
     User toEntity(RegistrationDto registrationDto);
 
+    /**
+     * Преобразует сущность User в DTO ответа.
+     *
+     * @param user сущность пользователя
+     * @return DTO ответа с информацией о пользователе
+     */
     UserResponseDto toDto(User user);
 
     List<UserResponseDto> toDto(List<User> users);

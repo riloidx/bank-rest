@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * DTO ответа при успешной аутентификации.
+ * Содержит информацию о пользователе и JWT токен для доступа к API.
+ */
 @Data
 @AllArgsConstructor
 @Schema(description = "DTO ответа при аутентификации")

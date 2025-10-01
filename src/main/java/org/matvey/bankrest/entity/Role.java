@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Сущность роли пользователя.
+ * Определяет права доступа и полномочия пользователя в системе.
+ */
 @Getter
 @Setter
 @Entity

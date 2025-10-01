@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Сервис для управления пользователями.
+ * Предоставляет функциональность для создания, поиска, обновления и удаления пользователей.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -22,6 +26,12 @@ public class UserService {
     private final RoleService roleService;
 
 
+    /**
+     * Находит пользователя по ID и возвращает DTO.
+     *
+     * @param id ID пользователя
+     * @return DTO пользователя
+     */
     public UserResponseDto findUserDtoById(long id) {
         User user = findUserById(id);
         return userMapper.toDto(user);
@@ -37,6 +47,13 @@ public class UserService {
         return userMapper.toDto(users);
     }
 
+    /**
+     * Создает нового пользователя на основе данных регистрации.
+     *
+     * @param registrationDto данные для регистрации
+     * @return созданный пользователь
+     * @throws UserAlreadyExistsException если пользователь с таким email уже существует
+     */
     public User create(RegistrationDto registrationDto) {
         validateEmailNotExists(registrationDto.getEmail());
         User user = prepareNewUser(registrationDto);
@@ -60,6 +77,13 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    /**
+     * Подготавливает нового пользователя для сохранения.
+     * Устанавливает роль USER и кодирует пароль.
+     *
+     * @param registrationDto данные регистрации
+     * @return подготовленная сущность пользователя
+     */
     private User prepareNewUser(RegistrationDto registrationDto) {
         User user = userMapper.toEntity(registrationDto);
 
@@ -69,11 +93,25 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Находит пользователя по ID.
+     *
+     * @param id ID пользователя
+     * @return сущность пользователя
+     * @throws UserNotFoundException если пользователь не найден
+     */
     public User findUserById(long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    /**
+     * Находит пользователя по email.
+     *
+     * @param email email пользователя
+     * @return сущность пользователя
+     * @throws UserNotFoundException если пользователь не найден
+     */
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));

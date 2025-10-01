@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Контроллер для работы с профилем пользователя.
+ * Предоставляет API для получения информации о текущем пользователе.
+ */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -37,6 +41,12 @@ public class UserController {
                     content = @Content(mediaType = "application/json", 
                                      schema = @Schema(implementation = ErrorResponse.class)))
     })
+    /**
+     * Получает информацию о текущем авторизованном пользователе.
+     *
+     * @param currentUser данные текущего пользователя
+     * @return информация о пользователе
+     */
     public ResponseEntity<UserResponseDto> me(@AuthenticationPrincipal CustomUserDetails currentUser) {
         UserResponseDto dto = userService.findUserDtoByEmail(currentUser.getUsername());
         return ResponseEntity.ok(dto);

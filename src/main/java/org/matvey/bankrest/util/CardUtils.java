@@ -9,6 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+/**
+ * Утилитный класс для работы с банковскими картами.
+ * Предоставляет методы для генерации, шифрования, маскирования и валидации номеров карт.
+ */
 @Component
 public class CardUtils {
 
@@ -19,6 +23,11 @@ public class CardUtils {
     @Value("${security.encryption.secret-key}")
     private String secretKey;
 
+    /**
+     * Генерирует случайный 16-значный номер карты.
+     *
+     * @return сгенерированный номер карты
+     */
     public String generateCardNumber() {
         SecureRandom random = new SecureRandom();
         StringBuilder cardNumber = new StringBuilder();
@@ -30,6 +39,13 @@ public class CardUtils {
         return cardNumber.toString();
     }
 
+    /**
+     * Шифрует номер карты для безопасного хранения.
+     *
+     * @param cardNumber номер карты для шифрования
+     * @return зашифрованный номер карты в Base64
+     * @throws RuntimeException при ошибке шифрования
+     */
     public String encryptCardNumber(String cardNumber) {
         try {
             SecretKeySpec secretKey = new SecretKeySpec(this.secretKey.getBytes(StandardCharsets.UTF_8), algorithm);
@@ -43,6 +59,13 @@ public class CardUtils {
         }
     }
 
+    /**
+     * Расшифровывает номер карты.
+     *
+     * @param encryptedCardNumber зашифрованный номер карты
+     * @return расшифрованный номер карты
+     * @throws RuntimeException при ошибке расшифровки
+     */
     public String decryptCardNumber(String encryptedCardNumber) {
         try {
             SecretKeySpec secretKey = new SecretKeySpec(this.secretKey.getBytes(StandardCharsets.UTF_8), algorithm);
@@ -58,6 +81,12 @@ public class CardUtils {
         }
     }
 
+    /**
+     * Маскирует номер карты, показывая только последние 4 цифры.
+     *
+     * @param cardNumber номер карты для маскирования
+     * @return замаскированный номер карты
+     */
     public String maskCardNumber(String cardNumber) {
         if (cardNumber == null || cardNumber.length() < 4) {
             return "****";
@@ -67,6 +96,12 @@ public class CardUtils {
         return "**** **** **** " + lastFour;
     }
 
+    /**
+     * Проверяет валидность номера карты по алгоритму Луна.
+     *
+     * @param cardNumber номер карты для проверки
+     * @return true, если номер карты валиден
+     */
     public boolean isValidCardNumber(String cardNumber) {
         if (cardNumber == null || cardNumber.length() != 16) {
             return false;

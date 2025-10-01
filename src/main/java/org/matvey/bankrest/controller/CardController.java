@@ -30,6 +30,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Контроллер для управления банковскими картами.
+ * Предоставляет API для создания, просмотра, обновления и управления картами.
+ */
 @RestController
 @RequestMapping("/cards")
 @RequiredArgsConstructor
@@ -53,6 +57,12 @@ public class CardController {
                     content = @Content(mediaType = "application/json", 
                                      schema = @Schema(implementation = ErrorResponse.class)))
     })
+    /**
+     * Получает список всех карт в системе.
+     * Доступно только администраторам.
+     *
+     * @return список всех карт
+     */
     public ResponseEntity<List<CardResponseDto>> getAllCards() {
         List<CardResponseDto> cards = cardService.findAllCards();
         return ResponseEntity.ok(cards);
@@ -69,6 +79,13 @@ public class CardController {
                     content = @Content(mediaType = "application/json", 
                                      schema = @Schema(implementation = ErrorResponse.class)))
     })
+    /**
+     * Получает карты текущего пользователя с поддержкой пагинации.
+     *
+     * @param authentication данные аутентификации
+     * @param pageable параметры пагинации
+     * @return страница карт пользователя
+     */
     public ResponseEntity<Page<CardResponseDto>> getMyCards(
             Authentication authentication,
             @Parameter(description = "Параметры пагинации") @PageableDefault(size = 10) Pageable pageable) {
@@ -187,6 +204,12 @@ public class CardController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Извлекает ID текущего пользователя из данных аутентификации.
+     *
+     * @param authentication данные аутентификации
+     * @return ID текущего пользователя
+     */
     private Long getCurrentUserId(Authentication authentication) {
         return ((org.matvey.bankrest.security.CustomUserDetails) authentication.getPrincipal()).getId();
     }

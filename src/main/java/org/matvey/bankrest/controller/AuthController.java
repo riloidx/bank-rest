@@ -19,12 +19,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Контроллер для обработки запросов аутентификации.
+ * Предоставляет API для регистрации новых пользователей и входа в систему.
+ */
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Аутентификация", description = "API для регистрации и входа в систему")
 public class AuthController {
     private final AuthService authService;
 
+    /**
+     * Регистрирует нового пользователя в системе.
+     *
+     * @param registrationDto данные для регистрации пользователя
+     * @return ответ с данными пользователя и JWT токеном
+     */
     @PostMapping("/registration")
     @Operation(summary = "Регистрация нового пользователя", 
                description = "Создает нового пользователя в системе и возвращает JWT токен")
@@ -44,6 +54,12 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Выполняет аутентификацию пользователя.
+     *
+     * @param loginDto данные для входа в систему
+     * @return ответ с данными пользователя и JWT токеном
+     */
     @PostMapping("/login")
     @Operation(summary = "Вход в систему", 
                description = "Аутентифицирует пользователя и возвращает JWT токен")

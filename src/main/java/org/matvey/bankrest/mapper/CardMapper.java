@@ -15,18 +15,40 @@ import org.matvey.bankrest.util.CardUtils;
 
 import java.util.List;
 
+/**
+ * Mapper для преобразования между сущностями Card и DTO.
+ * Использует MapStruct для автоматической генерации кода маппинга.
+ */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserMapper.class})
 public interface CardMapper {
 
+    /**
+     * Преобразует DTO запроса создания карты в сущность Card.
+     *
+     * @param cardRequestDto DTO с данными для создания карты
+     * @return сущность Card
+     */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cardNumber", ignore = true)
     @Mapping(target = "owner", ignore = true)
     Card toEntity(CardRequestDto cardRequestDto);
 
+    /**
+     * Преобразует сущность Card в DTO ответа.
+     *
+     * @param card сущность карты
+     * @return DTO ответа с информацией о карте
+     */
     @Mapping(target = "maskedCardNumber", source = "cardNumber", qualifiedByName = "maskCardNumber")
     @Mapping(target = "owner", source = "owner")
     CardResponseDto toDto(Card card);
 
+    /**
+     * Преобразует список сущностей Card в список DTO ответов.
+     *
+     * @param cards список сущностей карт
+     * @return список DTO ответов
+     */
     List<CardResponseDto> toDto(List<Card> cards);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -35,6 +57,12 @@ public interface CardMapper {
     @Mapping(target = "owner", ignore = true)
     void updateEntityFromDto(CardUpdateDto cardUpdateDto, @MappingTarget Card card);
 
+    /**
+     * Маскирует номер карты для безопасного отображения.
+     *
+     * @param cardNumber зашифрованный номер карты
+     * @return замаскированный номер карты
+     */
     @Named("maskCardNumber")
     default String maskCardNumber(String cardNumber) {
         if (cardNumber == null) {

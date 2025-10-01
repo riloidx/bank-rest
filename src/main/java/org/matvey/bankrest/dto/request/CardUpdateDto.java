@@ -7,6 +7,10 @@ import org.matvey.bankrest.entity.CardStatus;
 
 import java.time.LocalDate;
 
+/**
+ * DTO для обновления данных банковской карты.
+ * Содержит поля, которые могут быть изменены при обновлении карты.
+ */
 @Data
 @Schema(description = "DTO для обновления карты")
 public class CardUpdateDto {

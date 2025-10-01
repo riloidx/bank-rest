@@ -13,6 +13,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.function.Function;
 
+/**
+ * Утилитный класс для работы с JWT токенами.
+ * Предоставляет методы для создания, валидации и извлечения данных из JWT токенов.
+ */
 @Component
 public class JwtUtil {
 
@@ -21,6 +25,11 @@ public class JwtUtil {
     private long expirationMs;
 
 
+    /**
+     * Конструктор для инициализации ключа подписи JWT токенов.
+     *
+     * @param secret секретный ключ из конфигурации
+     */
     public JwtUtil(@Value("${security.encryption.secret-key}") String secret) {
 
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
@@ -46,6 +55,12 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
+    /**
+     * Генерирует JWT токен для пользователя.
+     *
+     * @param userDetails данные пользователя
+     * @return JWT токен
+     */
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -55,6 +70,13 @@ public class JwtUtil {
                 .compact();
     }
 
+    /**
+     * Проверяет валидность JWT токена.
+     *
+     * @param token JWT токен
+     * @param userDetails данные пользователя
+     * @return true, если токен валиден
+     */
     public Boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

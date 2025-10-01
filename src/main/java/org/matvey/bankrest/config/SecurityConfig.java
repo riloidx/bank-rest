@@ -13,17 +13,33 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Конфигурация безопасности приложения.
+ * Настраивает аутентификацию, авторизацию и фильтры безопасности.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
+    /**
+     * Создает бин для кодирования паролей.
+     *
+     * @return экземпляр BCryptPasswordEncoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Настраивает цепочку фильтров безопасности.
+     *
+     * @param http объект конфигурации HTTP безопасности
+     * @return настроенная цепочка фильтров безопасности
+     * @throws Exception в случае ошибки конфигурации
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http

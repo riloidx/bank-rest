@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Контроллер для административных функций.
+ * Предоставляет API для управления системой, доступное только администраторам.
+ */
 @RestController
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
@@ -29,6 +33,12 @@ import java.util.List;
 public class AdminController {
     private final UserService userService;
 
+    /**
+     * Получает список всех пользователей в системе.
+     * Доступно только пользователям с ролью ADMIN.
+     *
+     * @return список всех пользователей
+     */
     @GetMapping("/users")
     @Operation(summary = "Получить всех пользователей", 
                description = "Возвращает список всех пользователей в системе. Доступно только администраторам.")

@@ -8,6 +8,10 @@ import org.hibernate.annotations.ColumnDefault;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * Сущность банковской карты.
+ * Представляет банковскую карту с номером, сроком действия, статусом и балансом.
+ */
 @Getter
 @Setter
 @Entity
